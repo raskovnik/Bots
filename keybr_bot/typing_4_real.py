@@ -1,3 +1,4 @@
+#python bot for keybr.com
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -15,7 +16,7 @@ driver.get("https://www.keybr.com/multiplayer")
 try:
     window = WebDriverWait(driver, 7).until(EC.presence_of_element_located((By.CLASS_NAME, text_bar)))
 except TimeoutException:
-    print("408 Request TeImeout")
+    print("408 Request Timeout")
 
 while True:
     compete = driver.find_element_by_class_name(text_bar)
