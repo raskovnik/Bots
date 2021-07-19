@@ -83,7 +83,7 @@ def completed(quiz, code, cursor=None):
 @postgres
 # fetch a question from the database
 def get_question(cursor=None):
-    sql = """SELECT title, url FROM challenges OFFSET floor(random()* (SELECT COUNT(quest_no) FROM challenges)) LIMIT 1"""
+    sql = """SELECT title, url FROM challenges WHERE status != 'completed' OFFSET floor(random()* (SELECT COUNT(quest_no) FROM challenges)) LIMIT 1"""
     return f"Quiz : {(cursor.execute(sql), cursor.fetchone())[1][0]} \n Link : {(cursor.execute(sql), cursor.fetchone())[1][1]}"
 
 
