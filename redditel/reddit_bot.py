@@ -35,8 +35,8 @@ def postgres(fn):
     return wrapper
 
 
-@postgres
 # create a table
+@postgres
 def create_table(cursor=None):
     sql = """CREATE TABLE IF NOT EXISTS challenges (
                 quest_no SERIAL PRIMARY KEY,
@@ -48,16 +48,16 @@ def create_table(cursor=None):
     cursor.execute(sql)
 
 
-@postgres
 # add data to the table
+@postgres
 def insert_data(cursor=None):
     sql = "INSERT INTO challenges(title, url, status, language) VALUES (%s, %s, 'Not completed', NULL)"
     for submission in reddit.subreddit("dailyprogrammer").hot(limit=None):
         cursor.execute(sql, (submission.title, submission.url))
 
 
-@postgres
 # update questions in the database if there are new questions
+@postgres
 def update_questions(cursor=None):
     url = "https://api.pushshift.io/reddit/submission/search/?after=10d&subreddit=dailyprogrammer"
     posts = requests.get(url)
@@ -73,22 +73,22 @@ def update_questions(cursor=None):
             print("Question already exists")
 
 
-@postgres
 # mark a question as completed
+@postgres
 def completed(quiz, code, cursor=None):
     sql = f""" UPDATE challenges SET language = '{code}', status = 'completed' WHERE url = '{quiz}'"""
     cursor.execute(sql)
 
 
-@postgres
 # fetch a question from the database
+@postgres
 def get_question(cursor=None):
     sql = """SELECT title, url FROM challenges WHERE status != 'completed' OFFSET floor(random()* (SELECT COUNT(quest_no) FROM challenges)) LIMIT 1"""
     return f"Quiz : {(cursor.execute(sql), cursor.fetchone())[1][0]} \n Link : {(cursor.execute(sql), cursor.fetchone())[1][1]}"
 
 
-@postgres
 # show stats
+@postgres
 def statistics(cursor=None):
     total = """SELECT COUNT(quest_no) FROM challenges"""
     completed = """SELECT COUNT(quest_no) FROM challenges WHERE status = 'completed'"""
@@ -113,15 +113,15 @@ logger = telebot.logger
 telebot.logger.setLevel(logging.INFO)
 
 
-@bot.message_handler(commands=['stats'])
 # fetches stats when user inputs /stats
+@bot.message_handler(commands=['stats'])
 def stats(message):
     bot.reply_to(message, "Fetching...")
     bot.reply_to(message, statistics())
 
 
-@bot.message_handler(commands=['completed'])
 # marks a question as completed when user inputs /completed url language
+@bot.message_handler(commands=['completed'])
 def complete(message):
     if len(message.text.split()) < 3:
         bot.reply_to(message, "not a valid url")
@@ -132,8 +132,8 @@ def complete(message):
         completed(quiz, language)
 
 
-@bot.message_handler(commands=['challenge'])
 # fetches a question when user inputs /challenge
+@bot.message_handler(commands=['challenge'])
 def challenge(message):
     bot.reply_to(message, "fetching...")
     bot.reply_to(message, get_question())
