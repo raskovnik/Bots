@@ -5,19 +5,20 @@ import json
 import praw
 import psycopg2
 import logging
-from decouple import config
+import os
+from time import sleep
 from datetime import datetime, date
 import telebot
 
 handler = logging.StreamHandler()
 handler.setLevel(logging.INFO)
 
-UA = config("USER_AGENT")
-cID = config("cID")
-cSC = config("cSC")
-userN = config("USERNAME")
-userP = config("PASSWORD")
-DB_URL = config("DATABASE_URL")
+UA = os.environ["USER_AGENT"]
+cID = os.environ["cID"]
+cSC = os.environ["cSC"]
+userN = os.environ["USERNAME"]
+userP = os.environ["PASSWORD"]
+DB_URL = os.environ["DATABASE_URL"]
 
 reddit = praw.Reddit(client_id=cID, client_secret=cSC, user_agent=UA, username=userN, password=userP)
 last_update = date(2021, 7, 19)
@@ -108,7 +109,7 @@ if (current_date - last_update).days >= 7:
     last_update = current_date
 
 # telegram part
-bot = telebot.TeleBot(config('BOT_TOKEN'))
+bot = telebot.TeleBot(os.environ['BOT_TOKEN'])
 logger = telebot.logger
 telebot.logger.setLevel(logging.INFO)
 
@@ -138,5 +139,15 @@ def challenge(message):
     bot.reply_to(message, "fetching...")
     bot.reply_to(message, get_question())
 
+# close the bot using the /stop command
+@bot.message_handler(commands=['stop'])
+def stop(message):
+    bot.reply_to(message, "Bot will go offline in a few")
+    bot.stop_polling()
+
 
 bot.polling()
+
+sleep(1200) #sleep for 20 minutes in case user forgets to stop the app
+
+bot.stop_polling() 

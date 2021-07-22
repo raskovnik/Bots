@@ -1,6 +1,6 @@
 praw
 psycopg2
-decouple
-telebot
+heroku3
+pyTelegramBotAPI
 flask
 gunicorn

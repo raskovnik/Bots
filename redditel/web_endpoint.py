@@ -12,7 +12,7 @@ heroku_app = heroku_conn.apps()[os.getenv("HEROKU_APP_NAME")]
 @app.route('/')
 def hello_world():
     thread = threading.Thread(
-        target=heroku_app.run_command, args=("sync-worker",))
+        target=heroku_app.run_command, args=("worker",))
     thread.daemon = True
     thread.start()
     return "OK"
