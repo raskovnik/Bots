@@ -2,3 +2,5 @@ praw
 psycopg2
 decouple
 telebot
+flask
+gunicorn
