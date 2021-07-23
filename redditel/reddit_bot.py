@@ -6,7 +6,7 @@ import praw
 import psycopg2
 import logging
 import os
-from time import sleep
+from time import sleep, time, ctime
 from datetime import datetime, date
 import telebot
 
@@ -60,6 +60,7 @@ def insert_data(cursor=None):
 # update questions in the database if there are new questions
 @postgres
 def update_questions(cursor=None):
+    updated_count = 0
     url = "https://api.pushshift.io/reddit/submission/search/?after=10d&subreddit=dailyprogrammer"
     posts = requests.get(url)
     data = json.loads(posts.text)
@@ -69,9 +70,12 @@ def update_questions(cursor=None):
             sql = f"""INSERT INTO challenges(title, url,status, language)
                     VALUES('{json.dumps(data['data'][i]['title'])}', '{data['data'][i]['url']}',  "Not completed", NULL)"""
             cursor.execute(sql)
+            updated_count += 1
 
         else:
             print("Question already exists")
+
+    bot.send_message(1162146024, f"Added {updated_count} challenges")
 
 
 # mark a question as completed
@@ -103,16 +107,15 @@ def statistics(cursor=None):
             f"Rust: {(cursor.execute(rust), cursor.fetchone())[1][0]}")
 
 
-current_date = date(datetime.now().year, datetime.now().month, datetime.now().day)
-if (current_date - last_update).days >= 7:
-    update_questions()
-    last_update = current_date
-
 # telegram part
 bot = telebot.TeleBot(os.environ['BOT_TOKEN'])
 logger = telebot.logger
 telebot.logger.setLevel(logging.INFO)
 
+current_date = date(datetime.now().year, datetime.now().month, datetime.now().day)
+if (current_date - last_update).days >= 7:
+    update_questions()
+    last_update = current_date
 
 # fetches stats when user inputs /stats
 @bot.message_handler(commands=['stats'])
@@ -142,12 +145,14 @@ def challenge(message):
 # close the bot using the /stop command
 @bot.message_handler(commands=['stop'])
 def stop(message):
-    bot.reply_to(message, "Bot will go offline in a few")
+    bot.reply_to(message, "Bot will be offline in a few")
+    bot.send_message(1162146024, f"Bot will be online at {ctime(time() + 14400)}")
     bot.stop_polling()
 
 
 bot.polling()
 
 sleep(1200) #sleep for 20 minutes in case user forgets to stop the app
+bot.send_message(1162146024, f"Bot will be online at {ctime(time() + 14400)}")
 
 bot.stop_polling() 
