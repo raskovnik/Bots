@@ -120,7 +120,6 @@ if (current_date - last_update).days >= 7:
 # fetches stats when user inputs /stats
 @bot.message_handler(commands=['stats'])
 def stats(message):
-    bot.reply_to(message, "Fetching...")
     bot.reply_to(message, statistics())
 
 
@@ -139,7 +138,6 @@ def complete(message):
 # fetches a question when user inputs /challenge
 @bot.message_handler(commands=['challenge'])
 def challenge(message):
-    bot.reply_to(message, "fetching...")
     bot.reply_to(message, get_question())
 
 # close the bot using the /stop command
@@ -149,10 +147,6 @@ def stop(message):
     bot.send_message(1162146024, f"Bot will be online at {ctime(time() + 14400)}")
     bot.stop_polling()
 
-
+start_time = time()
+bot.send_message(1162146024, f"Bot will be online for 10 minutes")
 bot.polling()
-
-sleep(1200) #sleep for 20 minutes in case user forgets to stop the app
-bot.send_message(1162146024, f"Bot will be online at {ctime(time() + 14400)}")
-
-bot.stop_polling() 
