@@ -6,12 +6,15 @@ import praw
 import psycopg2
 import logging
 import os
+import telebot
 from time import sleep, time, ctime
 from datetime import datetime, date
-import telebot
+from telegram.ext import Updater
+from telegram.ext import CommandHandler, MessageHandler, Filters
 
 handler = logging.StreamHandler()
 handler.setLevel(logging.INFO)
+
 
 UA = os.environ["USER_AGENT"]
 cID = os.environ["cID"]
@@ -22,7 +25,7 @@ DB_URL = os.environ["DATABASE_URL"]
 
 reddit = praw.Reddit(client_id=cID, client_secret=cSC, user_agent=UA, username=userN, password=userP)
 last_update = date(2021, 7, 19)
-
+current_date = date(datetime.now().year, datetime.now().month, datetime.now().day)
 
 def postgres(fn):
     def wrapper(*args, **kwargs):
@@ -61,16 +64,16 @@ def insert_data(cursor=None):
 @postgres
 def update_questions(cursor=None):
     updated_count = 0
-    url = "https://api.pushshift.io/reddit/submission/search/?after=10d&subreddit=dailyprogrammer"
+    url = f"https://api.pushshift.io/reddit/submission/search/?after={(current_date - last_update).days}d&subreddit=dailyprogrammer"
     posts = requests.get(url)
     data = json.loads(posts.text)
     for i in range(len(data['data'])):
-        command = """SELECT COUNT (url) FROM challenges WHERE url = data['data'][i]['url']"""
-        if cursor.execute(command) <= 0:
-            sql = f"""INSERT INTO challenges(title, url,status, language)
-                    VALUES('{json.dumps(data['data'][i]['title'])}', '{data['data'][i]['url']}',  "Not completed", NULL)"""
-            cursor.execute(sql)
+        command = f"""SELECT COUNT (url) FROM challenges WHERE url = '{data['data'][i]['url']}'"""
+        if int((cursor.execute(command), cursor.fetchone())[1][0]) <= 0:
             updated_count += 1
+            sql = f"""INSERT INTO challenges(title, url,status, language)
+                    VALUES('{json.dumps(data['data'][i]['title'])}', '{data['data'][i]['url']}',  'Not completed', NULL)"""
+            cursor.execute(sql)
 
         else:
             print("Question already exists")
@@ -107,46 +110,82 @@ def statistics(cursor=None):
             f"Rust: {(cursor.execute(rust), cursor.fetchone())[1][0]}")
 
 
-# telegram part
+# telegram bot
 bot = telebot.TeleBot(os.environ['BOT_TOKEN'])
-logger = telebot.logger
-telebot.logger.setLevel(logging.INFO)
+updater = Updater(token=os.environ['BOT_TOKEN'], use_context=True)
+dispatcher = updater.dispatcher
+logging.basicConfig(level=logging.INFO)
 
-current_date = date(datetime.now().year, datetime.now().month, datetime.now().day)
 if (current_date - last_update).days >= 7:
     update_questions()
     last_update = current_date
 
 # fetches stats when user inputs /stats
-@bot.message_handler(commands=['stats'])
-def stats(message):
-    bot.reply_to(message, statistics())
+def stats(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, text=statistics())
+
+
+# welcome message when the bot is started
+def start(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, text="Hello there, type /help to get started")
 
 
 # marks a question as completed when user inputs /completed url language
-@bot.message_handler(commands=['completed'])
-def complete(message):
-    if len(message.text.split()) < 3:
-        bot.reply_to(message, "not a valid url")
+def complete(update, context):
+    if len(update.message.text.split()) < 3:
+        context.bot.send_message(chat_id=update.effective_chat.id, text="not a valid challenge..!type /help for help")
     else:
-        quiz = message.text.split()[1]
-        language = message.text.split()[2]
-        bot.reply_to(message, quiz + " " +  str(" has been marked as completed in ") + " " + language)
+        quiz = update.message.text.split()[1]
+        language = update.message.text.split()[2]
+        context.bot.send_message(chat_id=update.effective_chat.id, text=f"{quiz} has been marked as completed in {language}")
         completed(quiz, language)
 
 
 # fetches a question when user inputs /challenge
-@bot.message_handler(commands=['challenge'])
-def challenge(message):
-    bot.reply_to(message, get_question())
+def challenge(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, text=get_question())
 
-# close the bot using the /stop command
-@bot.message_handler(commands=['stop'])
-def stop(message):
-    bot.reply_to(message, "Bot will be offline in a few")
-    bot.send_message(1162146024, f"Bot will be online at {ctime(time() + 14400)}")
-    bot.stop_polling()
+# help
+def hhelp(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, text="type /stats to get stats, /challenge for a question and /completed to mark a completed challenge")
+
+# handle other non commands
+def echo(update, context):
+    if update.message.text.split()[0].lower() != "completed": 
+        context.bot.send_message(chat_id=update.effective_chat.id, text="uknown command..!try /stats, /completed, /help or /challenge")
+    else:
+        pass
+
+
+def complete(update, context):
+    if len(update.message.text.split()) < 3:
+        context.bot.send_message(chat_id=update.effective_chat.id, text="not a valid challenge..!type /help for help")
+    else:
+        quiz = update.message.text.split()[1]
+        language = update.message.text.split()[2]
+        context.bot.send_message(chat_id=update.effective_chat.id, text=f"{quiz} has been marked as completed in {language}")
+
+
+start_handler = CommandHandler('start', start)
+help_handler = CommandHandler('help', hhelp)
+complete_handler = CommandHandler('completed', complete)
+challenge_handler = CommandHandler('challenge', challenge)
+stats_handler = CommandHandler('stats', stats)
+echo_handler = MessageHandler(Filters.text & (~Filters.command), echo)
+
+dispatcher.add_handler(start_handler)
+dispatcher.add_handler(help_handler)
+dispatcher.add_handler(complete_handler)
+dispatcher.add_handler(stats_handler)
+dispatcher.add_handler(challenge_handler)
+dispatcher.add_handler(echo_handler)
+
 
 start_time = time()
-bot.send_message(1162146024, f"Bot will be online for 10 minutes")
-bot.polling()
+# bot's online for five minutes
+bot.send_message(1162146024, "Bot will be online for five minutes")
+while time() - start_time < 300:
+    updater.start_polling()
+
+bot.send_message(1162146024, "Bot shuts down now")
+updater.stop()

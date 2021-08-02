@@ -4,13 +4,13 @@ import time
 import os
 import random
 
-WIN_WIDTH = 600
-WIN_HEIGHT = 800
+WIN_WIDTH = 500
+WIN_HEIGHT = 700
 
 BIRD_IMGS = [pygame.transform.scale2x(pygame.image.load(os.path.join(os.path.abspath(os.getcwd()), "flappy_bird_ai/imgs", "bird1.png"))), pygame.transform.scale2x(pygame.image.load(os.path.join(os.path.abspath(os.getcwd()), "flappy_bird_ai/imgs", "bird2.png"))), pygame.transform.scale2x(pygame.image.load(os.path.join(os.path.abspath(os.getcwd()), "flappy_bird_ai/imgs", "bird3.png"))) ]
 PIPE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join(os.path.abspath(os.getcwd()), "flappy_bird_ai/imgs", "pipe.png")))
 BASE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join(os.path.abspath(os.getcwd()), "flappy_bird_ai/imgs", "base.png")))
-BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join(os.path.abspath(os.getcwd()), "flappy_bird_ai/imgs", "bg.png")))
+BG_IMG = pygame.transform.scale(pygame.image.load(os.path.join(os.path.abspath(os.getcwd()), "flappy_bird_ai/imgs", "bg.png")), (WIN_WIDTH,WIN_HEIGHT ))
 
 class Bird:
     IMGS = BIRD_IMGS
@@ -88,7 +88,7 @@ def draw_window(win, bird):
 
     
 def main():
-    bird = Bird(600, 550)
+    bird = Bird(200, 200)
     win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 
     run = True
