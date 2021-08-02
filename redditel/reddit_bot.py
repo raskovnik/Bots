@@ -7,6 +7,7 @@ import psycopg2
 import logging
 import os
 import telebot
+import telegram
 from time import sleep, time, ctime
 from datetime import datetime, date
 from telegram.ext import Updater
