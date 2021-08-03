@@ -158,15 +158,6 @@ def echo(update, context):
         pass
 
 
-def complete(update, context):
-    if len(update.message.text.split()) < 3:
-        context.bot.send_message(chat_id=update.effective_chat.id, text="not a valid challenge..!type /help for help")
-    else:
-        quiz = update.message.text.split()[1]
-        language = update.message.text.split()[2]
-        context.bot.send_message(chat_id=update.effective_chat.id, text=f"{quiz} has been marked as completed in {language}")
-
-
 start_handler = CommandHandler('start', start)
 help_handler = CommandHandler('help', hhelp)
 complete_handler = CommandHandler('completed', complete)
