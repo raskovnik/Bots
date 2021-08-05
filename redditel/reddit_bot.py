@@ -6,7 +6,6 @@ import praw
 import psycopg2
 import logging
 import os
-import telebot
 import telegram
 from time import sleep, time, ctime
 from datetime import datetime, date
@@ -24,7 +23,7 @@ userN = os.environ["USERNAME"]
 userP = os.environ["PASSWORD"]
 DB_URL = os.environ["DATABASE_URL"]
 CHAT_ID = os.environ["CHAT_ID"]
-
+BOT_TOKEN = os.environ["BOT_TOKEN"]
 
 reddit = praw.Reddit(client_id=cID, client_secret=cSC, user_agent=UA, username=userN, password=userP)
 last_update = date(2021, 7, 19)
@@ -81,7 +80,7 @@ def update_questions(cursor=None):
         else:
             print("Question already exists")
 
-    bot.send_message(CHAT_ID, f"Added {updated_count} challenges")
+    bot.send_message(text=f"Added {updated_count} challenges", chat_id=CHAT_ID)
 
 
 # mark a question as completed
@@ -114,8 +113,8 @@ def statistics(cursor=None):
 
 
 # telegram bot
-bot = telebot.TeleBot(os.environ['BOT_TOKEN'])
-updater = Updater(token=os.environ['BOT_TOKEN'], use_context=True)
+bot = telegram.Bot(token=BOT_TOKEN)
+updater = Updater(token=BOT_TOKEN, use_context=True)
 dispatcher = updater.dispatcher
 logging.basicConfig(level=logging.INFO)
 
@@ -177,14 +176,14 @@ dispatcher.add_handler(echo_handler)
 
 start_time = time()
 # bot's online for five minutes
-bot.send_message(CHAT_ID, "Bot will be online for five minutes")
+bot.send_message(chat_id=CHAT_ID, text="Bot will be online for five minutes")
 
 # send 4 random challenges once it is strarted
 for i in range(5):
-    bot.send_message(CHAT_ID, get_question())
+    bot.send_message(chat_id=CHAT_ID, text=get_question())
 
 while time() - start_time < 300:
     updater.start_polling()
 
-bot.send_message(CHAT_ID, "Bot shuts down now")
+bot.send_message(chat_id=CHAT_ID, text="Bot shuts down now")
 updater.stop()
