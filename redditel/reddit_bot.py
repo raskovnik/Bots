@@ -176,6 +176,11 @@ dispatcher.add_handler(echo_handler)
 start_time = time()
 # bot's online for five minutes
 bot.send_message(1162146024, "Bot will be online for five minutes")
+
+# send 4 random challenges once it is strarted
+for i in range(5):
+    bot.send_message(1162146024, get_question())
+
 while time() - start_time < 300:
     updater.start_polling()
 
