@@ -23,6 +23,8 @@ cSC = os.environ["cSC"]
 userN = os.environ["USERNAME"]
 userP = os.environ["PASSWORD"]
 DB_URL = os.environ["DATABASE_URL"]
+CHAT_ID = os.environ["CHAT_ID"]
+
 
 reddit = praw.Reddit(client_id=cID, client_secret=cSC, user_agent=UA, username=userN, password=userP)
 last_update = date(2021, 7, 19)
@@ -79,7 +81,7 @@ def update_questions(cursor=None):
         else:
             print("Question already exists")
 
-    bot.send_message(1162146024, f"Added {updated_count} challenges")
+    bot.send_message(CHAT_ID, f"Added {updated_count} challenges")
 
 
 # mark a question as completed
@@ -175,14 +177,14 @@ dispatcher.add_handler(echo_handler)
 
 start_time = time()
 # bot's online for five minutes
-bot.send_message(1162146024, "Bot will be online for five minutes")
+bot.send_message(CHAT_ID, "Bot will be online for five minutes")
 
 # send 4 random challenges once it is strarted
 for i in range(5):
-    bot.send_message(1162146024, get_question())
+    bot.send_message(CHAT_ID, get_question())
 
 while time() - start_time < 300:
     updater.start_polling()
 
-bot.send_message(1162146024, "Bot shuts down now")
+bot.send_message(CHAT_ID, "Bot shuts down now")
 updater.stop()
