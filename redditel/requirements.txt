@@ -1,7 +1,6 @@
 praw
 psycopg2
 heroku3
-pyTelegramBotAPI
 flask
 gunicorn
 python-telegram-bot
