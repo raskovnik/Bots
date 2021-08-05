@@ -1,15 +1,18 @@
 import os
-from dotenv import load_dotenv
 import telegram
+import logging
+from telegram import Update
+from telegram.ext import Updater, CommandHandler, CallbackContext
+from dotenv import load_dotenv
 
 load_dotenv()
+logging.basicConfig(level=logging.INFO)
 TOKEN = os.environ['BOT_TOKEN']
+updater = Updater(TOKEN)
 
-#create an instance of the bot
-bot = telegram.Bot(token=TOKEN)
+def hello(update: Update, context: CallbackContext) -> None:
+    update.message.reply_text(f"Hello {update.effective_user.first_name}")
 
-# fetch updates
-updates = bot.get_updates()
-print(updates[0].message.from_user.id) # print sender's user id
+updater.dispatcher.add_handler(CommandHandler('hello', hello))
 
-# send message to a user
+updater.start_polling()
