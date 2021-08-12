@@ -177,7 +177,7 @@ dispatcher.add_handler(echo_handler)
 start_time = time()
 # bot's online for five minutes
 # send 4 random challenges once it is strarted
-for i in range(3):
+for i in range(4):
     bot.send_message(chat_id=CHAT_ID, text=get_question())
 
 while time() - start_time < 300:
