@@ -1,21 +1,24 @@
+#!/usr/bin/python3
 # python script that fetches a challenge from r/dailyprogrammer and sends it via telegram
 
 import requests
+import argparse
 import json
-import praw
 import psycopg2
 import logging
 import os
 import telegram
 from time import sleep, time, ctime
+from praw import Reddit
 from datetime import datetime, date
+from dotenv import load_dotenv
 from telegram.ext import Updater
 from telegram.ext import CommandHandler, MessageHandler, Filters
 
 handler = logging.StreamHandler()
 handler.setLevel(logging.INFO)
 
-
+load_dotenv()
 UA = os.environ["USER_AGENT"]
 cID = os.environ["cID"]
 cSC = os.environ["cSC"]
@@ -59,7 +62,9 @@ def create_table(cursor=None):
 def insert_data(cursor=None):
     sql = "INSERT INTO challenges(title, url, status, language) VALUES (%s, %s, 'Not completed', NULL)"
     for submission in reddit.subreddit("dailyprogrammer").hot(limit=None):
-        cursor.execute(sql, (submission.title, submission.url))
+        cursor.execute(sql, (submission.title,submission.url))
+        print(f"Added: {submission.title}")
+        
 
 
 # update questions in the database if there are new questions
@@ -118,6 +123,7 @@ updater = Updater(token=BOT_TOKEN, use_context=True)
 dispatcher = updater.dispatcher
 logging.basicConfig(level=logging.INFO)
 
+
 if (current_date - last_update).days >= 7:
     update_questions()
     last_update = current_date
@@ -174,13 +180,35 @@ dispatcher.add_handler(challenge_handler)
 dispatcher.add_handler(echo_handler)
 
 
-start_time = time()
 # bot's online for five minutes
 # send 4 random challenges once it is strarted
-for i in range(4):
-    bot.send_message(chat_id=CHAT_ID, text=get_question())
+# for i in range(4):
+#     bot.send_message(chat_id=CHAT_ID, text=get_question())
 
-while time() - start_time < 300:
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="CLI for creating table and inserting data.")
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("--create", action="store_true",
+                        help="create a table")
+    group.add_argument("--insert", action="store_true",
+                        help="insert data into the table")
+
+    args = vars(parser.parse_args())
+
+    if args["create"]:
+        print("creating table")
+        create_table()
+    
+    if args["insert"]:
+        print("inserting challenges")
+        insert_data()
+
+    else:
+        parser.print_usage()
+
+start_time = time()
+while time() - start_time < 30:
     updater.start_polling()
 
 updater.stop()
