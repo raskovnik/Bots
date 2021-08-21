@@ -155,12 +155,12 @@ def challenge(update, context):
 
 # help
 def hhelp(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text="type /stats to get stats, /challenge for a question and /completed to mark a completed challenge")
+    context.bot.send_message(chat_id=update.effective_chat.id, text="type /stats to get stats, /challenge for a question and /completed  url language to mark a completed challenge")
 
 # handle other non commands
 def echo(update, context):
     if update.message.text.split()[0].lower() != "completed": 
-        context.bot.send_message(chat_id=update.effective_chat.id, text="uknown command..!try /stats, /completed, /help or /challenge")
+        context.bot.send_message(chat_id=update.effective_chat.id, text="uknown command..!try /stats, /completed url language, /help or /challenge")
     else:
         pass
 
