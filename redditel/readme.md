@@ -1,6 +1,49 @@
+I'm not the best when it comes to how tos and tutorials but let's give it a try. 😜 \
 Bot that fetches challenges from r/dailyprogrammer and sends them to you via telegram.
 
-For the bot to work you'll need: \n
-[1]. A heroku account, you can create one [here](https://signup.heroku.com) if you don't have one.
-[2]. A telegram account.
+For the bot to work you'll need: 
+* A heroku account, you can create one [here](https://signup.heroku.com) if you don't have one. 
+* A telegram account. 
+* A reddit account
+
+create a directory for the bot and cd into the directory. \
+Fork or clone this repository. \
+Go to [Heroku website](heroku.com), login and create a new App; choose a meaningful name for your App. \
+Now we need to add a python build pack, head over to Settings>Add Build Pack>Select the Python Option. 
+
+Click [here](https://devcenter.heroku.com/articles/heroku-cli) to install heroku cli for your OS. \
+create a .env file in the directory with the bot. You will save all your credentials in this file. 
+
+Login to your telegram account and search for @BotFather follow the instructions given and then copy the bot token  given.
+Save the token in the .env file you created as BOT_TOKEN = Your token 
+
+Search for myidbot and type in /getid. Save the id you get from the bot in the .env file as CHAT_ID = id. 
+
+Click [here](https://ssl.reddit.com/prefs/apps/) and create a new app > script. \
+Add the following to the .env file cSC = secret, cID = personal use script, USER_AGENT = name, USERNAME = Your reddit username, PASSWORD = Your reddit password. 
+
+On your terminal run the following command. \
+`heroku authorizations:create`
+
+Save the token as HEROKU_API_TOKEN = token and add HEROKU_APP_NAME = Your app name to the .env file.
+Finally, go to heroku, click on the app you made > Settings > Reveal config vars and copy the database url and save it as DATABASE_URL = database url. \
+
+On the terminal run the following commands: \
+`git init` \
+`heroku login` \
+`heroku git:remote -a NAME_OF_YOUR_HEROKU_APP` \
+`git add .` \
+`git commit -m "deployment commit"` \
+`git push heroku`
+
+Then:
+`chmod +x reddit_bot.py` \
+`./reddit_bot.py --create` \
+`./reddit_bot.py --insert` This takes some time so you might want to get some coffee.
+
+For each of the variables in the .env file, run the command `heroku config: set VARIABLE_NAME = VARIABLE_VALUE`
+
+The bot runs for five minutes then shuts down. You might want to visit https://cron-job.org/en/ and set the time when the bot should run and send the challenges.
+
+If you made it to the end with no errors, say two hail marys and three our fathers. If you're not that religious, break your arm patting yourself on the back for a job well done.
 
