@@ -45,5 +45,6 @@ For each of the variables in the .env file, run the command `heroku config: set 
 
 The bot runs for five minutes then shuts down. You might want to visit https://cron-job.org/en/ and set the time when the bot should run and send the challenges.
 
+If you can make this readme better, I will happily merge your pull request. \
 If you made it to the end with no errors, say two hail marys and three our fathers. If you're not that religious, break your arm patting yourself on the back for a job well done.
 
