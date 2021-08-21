@@ -208,7 +208,7 @@ if __name__ == '__main__':
         parser.print_usage()
 
 start_time = time()
-while time() - start_time < 30:
+while time() - start_time < 300:
     updater.start_polling()
 
 updater.stop()
