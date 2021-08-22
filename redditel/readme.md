@@ -34,7 +34,7 @@ On the terminal run the following commands: \
 `heroku git:remote -a NAME_OF_YOUR_HEROKU_APP` \
 `git add .` \
 `git commit -m "deployment commit"` \
-`git push heroku`
+`git push --set-upstream heroku master`
 
 Then:
 `chmod +x reddit_bot.py` \
