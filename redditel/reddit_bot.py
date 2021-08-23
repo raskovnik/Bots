@@ -27,6 +27,7 @@ userP = os.environ["PASSWORD"]
 DB_URL = os.environ["DATABASE_URL"]
 CHAT_ID = os.environ["CHAT_ID"]
 BOT_TOKEN = os.environ["BOT_TOKEN"]
+QUESTIONS = os.environ["QUESTIONS"]
 
 reddit = praw.Reddit(client_id=cID, client_secret=cSC, user_agent=UA, username=userN, password=userP)
 last_update = date(2021, 8, 6)
@@ -180,12 +181,6 @@ dispatcher.add_handler(challenge_handler)
 dispatcher.add_handler(echo_handler)
 
 
-# bot's online for five minutes
-# send 4 random challenges once it is strarted
-# for i in range(4):
-#     bot.send_message(chat_id=CHAT_ID, text=get_question())
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="CLI for creating table and inserting data.")
     group = parser.add_mutually_exclusive_group()
@@ -206,6 +201,10 @@ if __name__ == '__main__':
 
     else:
         parser.print_usage()
+
+#send specified number of questions
+for i in range(1, int(QUESTIONS) + 1):
+    bot.send_message(chat_id=CHAT_ID, text=get_question())
 
 start_time = time()
 while time() - start_time < 300:
