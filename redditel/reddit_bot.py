@@ -29,7 +29,7 @@ CHAT_ID = os.environ["CHAT_ID"]
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 QUESTIONS = os.environ["QUESTIONS"]
 
-reddit = praw.Reddit(client_id=cID, client_secret=cSC, user_agent=UA, username=userN, password=userP)
+reddit = Reddit(client_id=cID, client_secret=cSC, user_agent=UA, username=userN, password=userP)
 last_update = date(2021, 8, 6)
 current_date = date(datetime.now().year, datetime.now().month, datetime.now().day)
 
