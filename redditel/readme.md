@@ -41,7 +41,8 @@ Then:
 `./reddit_bot.py --create` \
 `./reddit_bot.py --insert` This takes some time so you might want to get some coffee.
 
-For each of the variables in the .env file, run the command `heroku config: set VARIABLE_NAME = VARIABLE_VALUE`
+For each of the variables in the .env file, run the command `heroku config:set VARIABLE_NAME=VARIABLE_VALUE`
+run `heroku config:set QUESTIONS=number of questions you want per day` to set the number of questions to receive per day.
 
 The bot runs for five minutes then shuts down. You might want to visit https://cron-job.org/en/ and set the time when the bot should run and send the challenges.
 
