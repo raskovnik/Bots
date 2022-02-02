@@ -6,9 +6,12 @@ For the bot to work you'll need:
 * A telegram account. 
 * A reddit account
 
-create a directory for the bot and cd into the directory. \
-Fork or clone this repository. \
+Fork this repository. \
+Clone the fork you just created. 
+
+
 Go to [Heroku website](heroku.com), login and create a new App; choose a meaningful name for your App. \
+Go to Resources and search for Heroku postgres under add-ons and attach the database to your app. \
 Now we need to add a python build pack, head over to Settings>Add Build Pack>Select the Python Option. 
 
 Click [here](https://devcenter.heroku.com/articles/heroku-cli) to install heroku cli for your OS. \
@@ -29,7 +32,6 @@ Save the token as HEROKU_API_TOKEN = token and add HEROKU_APP_NAME = Your app na
 Finally, go to heroku, click on the app you made > Settings > Reveal config vars and copy the database url and save it as DATABASE_URL = database url. \
 
 On the terminal run the following commands: \
-`git init` \
 `heroku login` \
 `heroku git:remote -a NAME_OF_YOUR_HEROKU_APP` \
 `git add .` \
@@ -44,8 +46,13 @@ Then:
 For each of the variables in the .env file, run the command `heroku config:set VARIABLE_NAME=VARIABLE_VALUE` \
 run `heroku config:set QUESTIONS=number of questions you want per day` to set the number of questions to receive per day.
 
+If I update the code, you can merge the changes with the code you have by running the following commands: \
+`git pull` \
+`git add .` \
+`git commit -m "commit message"` \
+`git push heroku`
+
+
 The bot runs for five minutes then shuts down. You might want to visit https://cron-job.org/en/ and set the time when the bot should run and send the challenges.
 
-If you can make this readme better, I will happily merge your pull request. \
-If you made it to the end with no errors, say two hail marys and three our fathers. If you're not that religious, break your arm patting yourself on the back for a job well done.
-
+If you can make this project better, I will happily merge your pull request. \

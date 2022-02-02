@@ -111,11 +111,13 @@ def statistics(cursor=None):
     incomplete = """SELECT COUNT(quest_no) FROM challenges WHERE status != 'completed'"""
     python = """SELECT COUNT(quest_no) FROM challenges WHERE language = 'python'"""
     rust = """SELECT COUNT(quest_no) FROM challenges WHERE language = 'rust'"""
+    c = """SELECT COUNT(quest_no) FROM challenges WHERE language = 'rust'"""
     return (f"Total: {(cursor.execute(total), cursor.fetchone())[1][0]}, "
             f"Completed: {(cursor.execute(completed), cursor.fetchone())[1][0]}, "
             f"Incomplete: {(cursor.execute(incomplete), cursor.fetchone())[1][0]}, "
             f"Python : {(cursor.execute(python), cursor.fetchone())[1][0]}, "
-            f"Rust: {(cursor.execute(rust), cursor.fetchone())[1][0]}")
+            f"Rust: {(cursor.execute(rust), cursor.fetchone())[1][0]}, "
+            f"C: {(cursor.execute(c), cursor.fetchone())[1][0]}")
 
 
 # telegram bot
