@@ -9,7 +9,7 @@ from selenium.webdriver.common.keys import Keys
 import logging
 from time import sleep
 
-text_bar = "Track-ticker"
+text_bar = "TOGH16n0cCfkAlHR_TGf"
 driver = webdriver.Firefox()
 driver.get("https://www.keybr.com/multiplayer")
 
@@ -23,24 +23,22 @@ while True:
     while compete != "GO!":
         compete = driver.find_element_by_class_name(text_bar).text
     
-    type_text = driver.find_element_by_class_name("TextInput-fragment")
-    text = type_text.text
+    type_text = driver.find_elements_by_class_name("KhbgydyyEzzbUTdnv5eG")
     actions = ActionChains(driver)
 
     prev_char = "f" 
-    for c in text:
-        print("Char = {}".format(c))
-        if prev_char == "↵" and c == "\n":
-            continue
+    for text in type_text:
+        for c in text.text:
+            if prev_char == "↵" and c == "\n":
+                continue
 
-        if c == "↵":
-            actions.send_keys(Keys.ENTER)
-        elif c == "␣":
-            actions.send_keys(Keys.SPACE)
-        else:
-            actions.send_keys(c)
-        prev_char = c
+            if c == "↵":
+                actions.send_keys(Keys.ENTER)
+            elif c == "␣":
+                actions.send_keys(Keys.SPACE)
+            else:
+                actions.send_keys(c)
+            prev_char = c
 
-    actions.perform()
-    sleep(0.1)
+        actions.perform()
 
