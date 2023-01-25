@@ -1,5 +1,4 @@
-I'm not the best when it comes to how tos and tutorials but let's give it a try. 😜 \
-Bot that fetches challenges from r/dailyprogrammer and sends them to you via telegram.
+A Bot that fetches challenges from r/dailyprogrammer and sends them to you via telegram.
 
 For the bot to work you'll need: 
 * A heroku account, you can create one [here](https://signup.heroku.com) if you don't have one. 
@@ -53,6 +52,6 @@ If I update the code, you can merge the changes with the code you have by runnin
 `git push heroku`
 
 
-The bot runs for five minutes then shuts down. You might want to visit https://cron-job.org/en/ and set the time when the bot should run and send the challenges.
+The bot runs for five minutes then shuts down. You can visit https://cron-job.org/en/ and set the time when the bot should run and send the challenges.
 
-If you can make this project better, I will happily merge your pull request. \
+If you can make this project better, open a PR and I will merge your pull request.
